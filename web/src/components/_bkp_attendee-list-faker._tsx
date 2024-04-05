@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import { Search, MoreHorizontal, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight } from 'lucide-react'
 
 import dayjs from 'dayjs'
@@ -11,7 +11,7 @@ import { TableHeader } from './table/table-header'
 import { TableCell } from './table/table-cell'
 import { TableRow } from './table/table-row'
 
-//import { attendees } from '../data/attendees'
+import { attendees } from '../data/attendees'
 
 dayjs.extend(relativeTime)
 dayjs.locale('pt-br')
@@ -19,17 +19,6 @@ dayjs.locale('pt-br')
 export function AttendeeList() {
     const [inputSearch, setInputSearch] = useState('')
     const [page, setPage] = useState(1)
-    const [attendees, setAttendees] = useState([])
-
-    const eventId = '9e9bd979-9d10-4915-b339-3786b1634f33'
-
-    useEffect(() => {
-        fetch(`http://localhost:3333/events/${eventId}/attendees`)
-        .then(response => response.json())
-        .then(data => {
-            
-        })
-    }, [page])
 
     const totalPages = Math.ceil(attendees.length / 10)
     
@@ -37,10 +26,22 @@ export function AttendeeList() {
         setInputSearch(event.target.value)
     }
 
-    function goToFirstPage() { setPage(1) }
-    function goToPreviousPage() { setPage(page - 1) }
-    function goToNextPage() { setPage(page + 1) }
-    function goToLastPage() { setPage(totalPages) }
+    function goToFirstPage() {
+        setPage(1)
+    }
+
+    function goToPreviousPage() {
+        setPage(page - 1)
+    }
+
+    function goToNextPage() {
+        setPage(page + 1)
+    }
+
+    function goToLastPage() {
+        setPage(totalPages)
+    }
+
 
     return (
         <div className='flex flex-col gap-4'>
