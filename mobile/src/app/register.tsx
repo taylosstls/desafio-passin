@@ -29,9 +29,9 @@ export default function Register() {
     <View className="flex-1 bg-green-500 items-center justify-center">
       <Image source={require('@/assets/logo.png')} className='h-16' resizeMode='contain' />
 
-      <View className='w-full mt-12 gap-3'>
+      <View className='w-3/4 mt-12 gap-3'>
         <Input>
-          <FontAwesome6 name='user-cicle' size={20} color={colors.green[200]} />
+          <FontAwesome6 name='user-circle' size={20} color={colors.green[200]} />
           <Input.Field placeholder='Nome completo' onChangeText={setName} />
         </Input>
         

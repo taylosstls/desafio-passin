@@ -1,6 +1,16 @@
 import { View, Image, ImageBackground, Text, TouchableOpacity } from "react-native";
 
-export function Credential(){
+import { Feather } from "@expo/vector-icons"; 
+
+import { colors } from "@/styles/colors";
+
+type Props = {
+    image?: string, 
+    onChangeAvatar?: () => void
+}
+
+export function Credential({ onChangeAvatar, image } : Props){
+
     return (
         <View className="w-full self-stretch items-center">
             <Image source={require('@/assets/ticket/band.png')}
@@ -17,9 +27,18 @@ export function Credential(){
                     <View className="w-40 h-40 bg-black rounded-full" />
                 </ImageBackground>
                 
-                {/* TO DO: Continuar dos 00:39:00 - Instalação do EXPO IMG PICKER */}
-                <Image source={{uri: "https://github.com/taylosstls.png"}}
-                    className="w-36 h-36 rounded-full -mt-24" />
+                { image ?
+                    (
+                        <TouchableOpacity activeOpacity={0.9} onPressOut={onChangeAvatar}>
+                            <Image source={{uri: image}} className="w-36 h-36 rounded-full -mt-24" />
+                        </TouchableOpacity>
+                    )
+                    : (
+                        <TouchableOpacity activeOpacity={0.9} className="w-36 h-36 rounded-full bg-gray-400 -mt-24 flex items-center justify-center" onPressOut={onChangeAvatar}>
+                            <Feather name="camera" color={colors.green[400]} size={32} />
+                        </TouchableOpacity>
+                    )
+                }
                 
                 <Text className="text-zinc-50 text-2xl font-bold mt-4">Gustavo Teixeira</Text>
                 <Text className="text-zinc-300 text-sm font-bold mb-4">luisgustavogto@gmail.com</Text>

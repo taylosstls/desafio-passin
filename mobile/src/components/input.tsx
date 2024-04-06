@@ -4,7 +4,7 @@ import { TextInput, View, TextInputProps } from 'react-native';
 
 function Input( { children }: { children: ReactNode }) {
   return (
-    <View className='w-full h-14 flex-row items-center gap3 p-3 border border-green-400 rounded-lg'>
+    <View className='w-full h-14 flex-row items-center gap-3 p-3 border border-green-400 rounded-lg'>
         {children}
     </View>
   );
