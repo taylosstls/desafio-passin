@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react"
-import { Text, View, ScrollView, TouchableOpacity, Alert, Modal } from "react-native"
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useState } from "react"
+import { Text, View, ScrollView, TouchableOpacity, Alert, Modal, Share } from "react-native"
+import { MotiView } from 'moti'
 
 import { FontAwesome } from "@expo/vector-icons"
 import * as ImagePicker from 'expo-image-picker'
+import { Redirect } from 'expo-router'
 
 import { Header } from "@/components/header"
 import { Credential } from "@/components/credential"
@@ -11,10 +12,26 @@ import { colors } from "@/styles/colors"
 import { Button } from "@/components/button"
 import { QRCode } from "@/components/qrcode"
 
+import { useBadgeStore } from '@/store/badge-store'
 
 export default function Ticket() {
-    const [image, setImage] = useState('')
     const [expandQRCode, setExpandQRCode] = useState(false)
+
+    const badgeStore = useBadgeStore()
+
+    async function handleShare() {
+        try {
+            if(badgeStore.data?.checkInURL) {
+                await Share.share({
+                    message: badgeStore.data.checkInURL
+                })
+            }
+        } catch (error) {
+            console.log(error)
+            Alert.alert('Compartilhar', 'Não foi possível compartilhar seu código.')
+        }
+        
+    }
 
     async function handleSelectImage(){
         try {
@@ -27,9 +44,9 @@ export default function Ticket() {
             if (result.canceled) return
 
             if (result.assets) {
-                const selectedImageUri = result.assets[0].uri
-                setImage(selectedImageUri)
-                await AsyncStorage.setItem('selectedImageUri', selectedImageUri)
+                badgeStore.updateAvatar(result.assets[0].uri)
+
+
             }
 
         } catch(error) {
@@ -38,34 +55,27 @@ export default function Ticket() {
         }
     }
 
-    useEffect(() => {
-        const retrieveImage = async () => {
-          try {
-            const storedImageUri = await AsyncStorage.getItem('selectedImageUri')
-            if (storedImageUri) setImage(storedImageUri)
-          } catch (error) {
-            console.log(error)
-            Alert.alert('Erro', 'Não foi possível carregar a imagem previamente selecionada.')
-          }
-        }
-    
-        retrieveImage()
-      }, [])
+    if (!badgeStore.data?.checkInURL) return <Redirect href='/' />
 
     return (
         <View className="flex-1 bg-green-500">
             <Header title="Minha Credencial" />
             <ScrollView className="-mt-28 -z-10" contentContainerClassName="px-8 pb-8" showsVerticalScrollIndicator={false}>
-                <Credential image={image} onChangeAvatar={handleSelectImage} onExpandQRCode={() => setExpandQRCode(true)} />
+                <Credential data={badgeStore.data} onChangeAvatar={handleSelectImage} onExpandQRCode={() => setExpandQRCode(true)} />
 
-                <FontAwesome name="angle-double-down" size={24} color={colors.gray[300]} className="self-center my-6" />
+                <MotiView
+                from={{ translateY: 0 }}
+                animate={{ translateY: 10 }}
+                transition={{ loop: true, type: "timing", duration: 700 }}>
+                    <FontAwesome name="angle-double-down" size={24} color={colors.gray[300]} className="self-center my-6" />
+                </MotiView>
                 
                 <Text className="text-white text-center font-bold text-2xl mt-4">Compartilhar credencial</Text>
-                <Text className="text-white text-center font-regular text-base mt-1 mb-6">Mostre ao mundo que você vai participar do Unite Summit!</Text>
+                <Text className="text-white text-center font-regular text-base mt-1 mb-6">Mostre ao mundo que você vai participar do evento {badgeStore.data.eventTitle}!</Text>
 
-                <Button title="Compartilhar" />
+                <Button title="Compartilhar" onPress={handleShare} />
 
-                <TouchableOpacity activeOpacity={0.7} className="mt-10">
+                <TouchableOpacity onPress={(() => badgeStore.remove())} activeOpacity={0.7} className="mt-10">
                     <Text className="text-base text-white font-bold text-center">Remover ingresso</Text>
                 </TouchableOpacity>
             </ScrollView>
