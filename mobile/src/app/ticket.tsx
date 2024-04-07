@@ -1,18 +1,20 @@
-import { useEffect, useState } from "react";
-import { Text, View, ScrollView, TouchableOpacity, Alert } from "react-native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useState } from "react"
+import { Text, View, ScrollView, TouchableOpacity, Alert, Modal } from "react-native"
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
-import { FontAwesome } from "@expo/vector-icons";
-import * as ImagePicker from 'expo-image-picker';
+import { FontAwesome } from "@expo/vector-icons"
+import * as ImagePicker from 'expo-image-picker'
 
-import { Header } from "@/components/header";
-import { Credential } from "@/components/credential";
-import { colors } from "@/styles/colors";
-import { Button } from "@/components/button";
+import { Header } from "@/components/header"
+import { Credential } from "@/components/credential"
+import { colors } from "@/styles/colors"
+import { Button } from "@/components/button"
+import { QRCode } from "@/components/qrcode"
 
 
 export default function Ticket() {
     const [image, setImage] = useState('')
+    const [expandQRCode, setExpandQRCode] = useState(false)
 
     async function handleSelectImage(){
         try {
@@ -39,7 +41,7 @@ export default function Ticket() {
     useEffect(() => {
         const retrieveImage = async () => {
           try {
-            const storedImageUri = await AsyncStorage.getItem('selectedImageUri');
+            const storedImageUri = await AsyncStorage.getItem('selectedImageUri')
             if (storedImageUri) setImage(storedImageUri)
           } catch (error) {
             console.log(error)
@@ -48,13 +50,13 @@ export default function Ticket() {
         }
     
         retrieveImage()
-      }, []);
+      }, [])
 
     return (
         <View className="flex-1 bg-green-500">
             <Header title="Minha Credencial" />
             <ScrollView className="-mt-28 -z-10" contentContainerClassName="px-8 pb-8" showsVerticalScrollIndicator={false}>
-                <Credential image={image} onChangeAvatar={handleSelectImage} />
+                <Credential image={image} onChangeAvatar={handleSelectImage} onExpandQRCode={() => setExpandQRCode(true)} />
 
                 <FontAwesome name="angle-double-down" size={24} color={colors.gray[300]} className="self-center my-6" />
                 
@@ -67,6 +69,19 @@ export default function Ticket() {
                     <Text className="text-base text-white font-bold text-center">Remover ingresso</Text>
                 </TouchableOpacity>
             </ScrollView>
+
+            <Modal visible={expandQRCode} statusBarTranslucent transparent={true} animationType="fade">
+                <View className="flex-1 bg-green-500/95 items-center justify-center">
+                    <View className="mt-auto mb-auto">
+                        <QRCode value="teste" size={300} />
+                    </View>
+                    <TouchableOpacity activeOpacity={0.7} onPress={() => setExpandQRCode(false)}
+                    className="w-1/2 h-14 align-bottom bg-orange-500 items-center justify-center rounded-lg mb-24">
+                        <Text className="text-green-500 text-base font-bold uppercase">Fechar</Text>
+                    </TouchableOpacity>
+                </View>
+
+            </Modal>
         </View>
     )
 }

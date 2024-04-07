@@ -1,15 +1,17 @@
-import { View, Image, ImageBackground, Text, TouchableOpacity } from "react-native";
+import { View, Image, ImageBackground, Text, TouchableOpacity } from "react-native"
 
-import { Feather } from "@expo/vector-icons"; 
+import { Feather } from "@expo/vector-icons" 
 
-import { colors } from "@/styles/colors";
+import { colors } from "@/styles/colors"
+import { QRCode } from "@/components/qrcode"
 
 type Props = {
     image?: string, 
-    onChangeAvatar?: () => void
+    onChangeAvatar?: () => void,
+    onExpandQRCode?: () => void
 }
 
-export function Credential({ onChangeAvatar, image } : Props){
+export function Credential({ onChangeAvatar, onExpandQRCode, image } : Props){
 
     return (
         <View className="w-full self-stretch items-center">
@@ -29,7 +31,7 @@ export function Credential({ onChangeAvatar, image } : Props){
                 
                 { image ?
                     (
-                        <TouchableOpacity activeOpacity={0.9} onPressOut={onChangeAvatar}>
+                        <TouchableOpacity activeOpacity={0.9} onPress={onChangeAvatar}>
                             <Image source={{uri: image}} className="w-36 h-36 rounded-full -mt-24" />
                         </TouchableOpacity>
                     )
@@ -43,9 +45,9 @@ export function Credential({ onChangeAvatar, image } : Props){
                 <Text className="text-zinc-50 text-2xl font-bold mt-4">Gustavo Teixeira</Text>
                 <Text className="text-zinc-300 text-sm font-bold mb-4">luisgustavogto@gmail.com</Text>
 
-                <Image source={require("@/assets/ticket/qrcode.png")} className="w-32 h-32" resizeMode="contain"  />
+                <QRCode value="teste" size={120} />
 
-                <TouchableOpacity activeOpacity={0.7} className="mt-6">
+                <TouchableOpacity activeOpacity={0.7} className="mt-6" onPress={onExpandQRCode}>
                     <Text className="font-body text-orange-500 text-sm">Ampliar QRCode</Text>
                 </TouchableOpacity>
             
